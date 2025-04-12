@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function showhint1() {
+            fetch('hint1.txt') 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('File not found');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                const hintContainer = document.getElementById('hintContainer');
+                hintContainer.innerText = text; 
+                hintContainer.style.color = 'white'; 
+                })
+        }
+
+        function showhint2() {
+            fetch('hint2.txt') 
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('File not found');
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    document.getElementById('hintContainer').innerText = text; 
+                } )
+        }
+    </script>
+</head>
+<body>
+    <h1>Website Hacker</h1>
+    <p>
+        Welcome to my website! One thing that you will learn as you play through these levels is that there are 
+        several ways to exploit webpages to get what you want from them. 
+    </p>
+    <a href="Challenge_1.html">Click here to start the challenge!</a>
+    <p>
+        P.S. If you are getting stuck, you can always come back for a hint.
+    </p>
+
+    <button onclick="showhint1()">Show Hint for Level 1</button>
+    <button onclick="showhint2()">Show Hint for Level 2</button>
+
+    <div id="hintContainer" style="margin-top: 20px; border: 1px solid #ccc; padding: 10px;">
+
+    </div>
+</body>
+</html>

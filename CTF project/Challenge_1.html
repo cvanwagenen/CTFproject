@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Level 1</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        if (!document.cookie.includes('admin=')) {
+            document.cookie = "admin=false; path=/";
+        }
+
+        async function checkAdmin() {
+            const cookies = document.cookie.split('; ');
+            const adminCookie = cookies.find(c => c.startsWith('admin='));
+            const isAdmin = adminCookie ? adminCookie.split('=')[1] : 'false';
+
+            if (isAdmin === 'true') {
+                try {
+                    const response = await fetch('flag1.txt');
+                    const flag = await response.text();
+                    document.getElementById('content').innerHTML = `
+                        <h2>${flag}</h2>
+                        <a href="Challenge_2.html">Proceed to Next Level</a>
+                    `;
+                } catch (error) {
+                    console.error('Error loading flag:', error);
+                }
+            } else {
+                document.getElementById('content').innerHTML = 
+                    '<p>Sorry there is nothing here for you</p>';
+            }
+        }
+    </script>
+</head>
+<body onload="checkAdmin()">
+    <h1>Level 1</h1>
+    <div id="content">Loading...</div>
+    <a href="intro.html">Go back for a hint</a>
+</body>
+</html>
+
