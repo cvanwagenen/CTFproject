@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Security Challenge</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>User Authentication</h1>
+    <p style="text-align: center;">How can will you become the admin now?</p>
+    <p style="text-align: center;">If only there were a way to edit the username and password</p>
+    <p>Username: <span id="username">Loading...</span></p>
+    <p>Password: <span id="password">Loading...</span></p>
+    <div id="result" style="color:white; display:none;"></div>
+
+    <script>
+        (async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const username = urlParams.get('username') || '';
+            const password = urlParams.get('password') || '';
+
+            document.getElementById('username').textContent = username;
+            document.getElementById('password').textContent = password;
+
+            try {
+                const response = await fetch('flag3.txt');
+                const flag = (await response.text()).trim();
+                
+                const simulatedQuery = `SELECT * FROM users 
+                                      WHERE username = '${username}' 
+                                      AND password = '${password}' 
+                                      LIMIT 1`;
+
+                if (simulatedQuery.includes("' OR 1=1 --")) {
+                    const users = [
+                        {user: 'admin', pass: 's3cr3tP@ssw0rd'},
+                        {user: 'jake', pass: 'qwerty123'},
+                        {user: ' You found it!', pass: flag}
+                    ];
+                    
+                    let output = '<h3>User Database:</h3><table border="1">';
+                    users.forEach(u => {
+                        output += `<tr><td>${u.user}</td><td>${u.pass}</td>`;
+                        output += '</tr>';
+                    });
+                    output += '</table>';
+                    output += '<p>Congratulations! You have completed all the challenges!</p>'
+                    
+                    document.getElementById('result').innerHTML = output;
+                    document.getElementById('result').style.display = 'block';
+                }
+                else if (!isNaN(password) && Number(password) > 0) {
+                    document.getElementById('result').textContent = "Valid parameters!";
+                    document.getElementById('result').style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading flag:', error);
+                document.getElementById('result').textContent = "Error";
+                document.getElementById('result').style.display = 'block';
+            }
+        })();
+    </script>
+</body>
+</html>

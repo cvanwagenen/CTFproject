@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Level 2</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        if (!document.cookie.includes('flagValue=')) {
+            document.cookie = `flagValue=${0}; path=/`;
+        }
+
+        async function checkAccess() {
+            const cookies = document.cookie.split('; ');
+            const flagCookie = cookies.find(c => c.startsWith('flagValue='));
+            const flagValue = flagCookie ? flagCookie.split('=')[1] : null;
+
+            const contentDiv = document.getElementById('secret-content');
+            
+            if (await validateHash(flagValue)) {
+                try {
+                    const response = await fetch('flag2.txt');
+                    const flag = await response.text();
+                    contentDiv.innerHTML = `
+                        <h2>${flag}</h2>
+                        <a href="final.html">Onto the final challenge</a>
+                    `;
+                } catch (error) {
+                    contentDiv.innerHTML = `
+                        <p style="color: red">Error loading secret flag</p>
+                        <a href="index.html">Return to Main Page</a>
+                    `;
+                }
+            } else {
+                contentDiv.innerHTML = `
+                    <p>Invalid access credentials</p>
+                `;
+            }
+        }
+
+        async function validateHash(input) {
+            const targetHash = "4fc82b26aecb47d2868c4efbe3581732a3e7cbcc6c2efb32062c08170a05eeb8";
+            
+            if (!input) return false;
+            
+            const encoder = new TextEncoder();
+            const data = encoder.encode(input);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            return hashHex === targetHash;
+        }
+    </script>
+</head>
+<body onload="checkAccess()">
+    <h1>Level 2</h1>
+    <div id="secret-content">Checking access credentials...</div>
+    <a href="intro.html">Go back for a hint</a>
+</body>
+</html>
